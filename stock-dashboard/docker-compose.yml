@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  stock-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: stock-dashboard
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot reloading
+      - ./src:/app/src
+      - ./public:/app/public
+      # Don't mount node_modules
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    restart: unless-stopped
+
+  # Production service (optional - use when ready for production)
+  stock-dashboard-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: stock-dashboard-prod
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    profiles:
+      - production
+
